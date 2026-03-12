@@ -12,8 +12,17 @@
 
             <flux:sidebar.nav>
                 <flux:sidebar.group :heading="__('Platform')" class="grid">
-                    <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
+                    <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate.hover>
                         {{ __('Dashboard') }}
+                    </flux:sidebar.item>
+                      <flux:sidebar.item icon="home" :href="route('admin.roles.index')" :current="request()->routeIs('admin.roles.*')" wire:navigate.hover>
+                        {{ __('Roles') }}
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="shield-check" :href="route('admin.permissions.index')" :current="request()->routeIs('admin.permissions.*')" wire:navigate.hover>
+                        {{ __('Permissions') }}
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="users" :href="route('admin.users.index')" :current="request()->routeIs('admin.users.*')" wire:navigate.hover>
+                        {{ __('Users') }}
                     </flux:sidebar.item>
                 </flux:sidebar.group>
             </flux:sidebar.nav>
@@ -89,6 +98,20 @@
         </flux:header>
 
         {{ $slot }}
+
+        {{-- Global navigation loading bar --}}
+        <div
+            x-data="{ loading: false }"
+            x-on:livewire:navigate-start.window="loading = true"
+            x-on:livewire:navigate-end.window="loading = false"
+        >
+            <div
+                x-show="loading"
+                x-transition:enter="transition-opacity duration-150"
+                x-transition:leave="transition-opacity duration-300"
+                class="fixed top-0 inset-x-0 z-50 h-0.5 bg-zinc-800 dark:bg-white animate-pulse"
+            ></div>
+        </div>
 
         @fluxScripts
     </body>
