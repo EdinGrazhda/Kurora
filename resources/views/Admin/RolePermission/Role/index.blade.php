@@ -49,7 +49,7 @@
         </div>
 
         {{-- Table card --}}
-        <div class="overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800/50">
+        <div class="overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800/50 px-4">
             <flux:table :paginate="$this->roles">
                 <flux:table.columns>
                     <flux:table.column>{{ __('Name') }}</flux:table.column>

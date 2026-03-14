@@ -15,7 +15,7 @@
                     <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate.hover>
                         {{ __('Dashboard') }}
                     </flux:sidebar.item>
-                      <flux:sidebar.item icon="home" :href="route('admin.roles.index')" :current="request()->routeIs('admin.roles.*')" wire:navigate.hover>
+                      <flux:sidebar.item icon="user-group" :href="route('admin.roles.index')" :current="request()->routeIs('admin.roles.*')" wire:navigate.hover>
                         {{ __('Roles') }}
                     </flux:sidebar.item>
                     <flux:sidebar.item icon="shield-check" :href="route('admin.permissions.index')" :current="request()->routeIs('admin.permissions.*')" wire:navigate.hover>
