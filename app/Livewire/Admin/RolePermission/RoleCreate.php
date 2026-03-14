@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\RolePermission;
 
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Validate;
@@ -26,9 +27,20 @@ class RoleCreate extends Component
         // eagerly available for the view via allPermissions()
     }
 
+    #[Computed]
     public function allPermissions()
     {
         return Permission::orderBy('name')->get(['id', 'name']);
+    }
+
+    public function selectAll(): void
+    {
+        $this->selectedPermissions = $this->allPermissions->pluck('id')->map(fn ($id) => (string) $id)->toArray();
+    }
+
+    public function deselectAll(): void
+    {
+        $this->selectedPermissions = [];
     }
 
     public function save(): void
@@ -54,7 +66,7 @@ class RoleCreate extends Component
     public function render()
     {
         return view('Admin.RolePermission.Role.create', [
-            'allPermissions' => $this->allPermissions(),
+            'allPermissions' => $this->allPermissions,
         ]);
     }
 }

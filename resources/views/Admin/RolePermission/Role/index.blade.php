@@ -1,14 +1,33 @@
-<div>
+<div class="space-y-6">
         {{-- Flash message --}}
         @if (session('success'))
-            <flux:callout variant="success" class="mb-4">
-                <flux:callout.heading>{{ session('success') }}</flux:callout.heading>
-            </flux:callout>
+            <div class="relative overflow-hidden rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-4">
+                <div class="flex items-center gap-3">
+                    <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-500/10">
+                        <flux:icon name="check-circle" class="size-5 text-emerald-500" />
+                    </div>
+                    <flux:text class="font-medium text-emerald-600 dark:text-emerald-400">{{ session('success') }}</flux:text>
+                </div>
+            </div>
         @endif
 
-        {{-- Header row --}}
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-            <flux:heading size="xl">{{ __('Roles') }}</flux:heading>
+        {{-- Breadcrumb --}}
+        <flux:breadcrumbs>
+            <flux:breadcrumbs.item href="{{ route('dashboard') }}" wire:navigate.hover icon="home" />
+            <flux:breadcrumbs.item>{{ __('Roles') }}</flux:breadcrumbs.item>
+        </flux:breadcrumbs>
+
+        {{-- Header --}}
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div class="flex items-center gap-3">
+                <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-500/10 dark:bg-blue-500/20">
+                    <flux:icon name="user-group" class="size-5 text-blue-500" />
+                </div>
+                <div>
+                    <flux:heading size="xl">{{ __('Roles') }}</flux:heading>
+                    <flux:text class="text-sm text-zinc-500">{{ __('Define roles and manage their permissions') }}</flux:text>
+                </div>
+            </div>
 
             <div class="flex items-center gap-3">
                 <flux:input
@@ -16,7 +35,7 @@
                     placeholder="{{ __('Search roles…') }}"
                     clearable
                     icon="magnifying-glass"
-                    class="w-56"
+                    class="w-60"
                 />
                 <flux:button
                     variant="primary"
@@ -29,80 +48,117 @@
             </div>
         </div>
 
-        {{-- Table --}}
-        <flux:table :paginate="$this->roles">
-            <flux:table.columns>
-                <flux:table.column>{{ __('Name') }}</flux:table.column>
-                <flux:table.column>{{ __('Guard') }}</flux:table.column>
-                <flux:table.column>{{ __('Permissions') }}</flux:table.column>
-                <flux:table.column>{{ __('Created') }}</flux:table.column>
-                <flux:table.column align="end">{{ __('Actions') }}</flux:table.column>
-            </flux:table.columns>
+        {{-- Table card --}}
+        <div class="overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800/50">
+            <flux:table :paginate="$this->roles">
+                <flux:table.columns>
+                    <flux:table.column>{{ __('Name') }}</flux:table.column>
+                    <flux:table.column>{{ __('Guard') }}</flux:table.column>
+                    <flux:table.column>{{ __('Permissions') }}</flux:table.column>
+                    <flux:table.column>{{ __('Created') }}</flux:table.column>
+                    <flux:table.column align="end">{{ __('Actions') }}</flux:table.column>
+                </flux:table.columns>
 
-            <flux:table.rows>
-                @forelse ($this->roles as $role)
-                    <flux:table.row :key="$role->id">
-                        <flux:table.cell class="font-medium">{{ $role->name }}</flux:table.cell>
-                        <flux:table.cell>
-                            <flux:badge size="sm" variant="outline">{{ $role->guard_name }}</flux:badge>
-                        </flux:table.cell>
-                        <flux:table.cell>
-                            <flux:badge size="sm">{{ $role->permissions_count }}</flux:badge>
-                        </flux:table.cell>
-                        <flux:table.cell class="text-zinc-500 text-sm">
-                            {{ $role->created_at?->toDateString() }}
-                        </flux:table.cell>
-                        <flux:table.cell align="end">
-                            <div class="flex items-center justify-end gap-2">
-                                <flux:button
-                                    size="sm"
-                                    variant="ghost"
-                                    icon="eye"
-                                    href="{{ route('admin.roles.show', $role) }}"
-                                    wire:navigate.hover
-                                    :aria-label="__('View') . ' ' . $role->name"
-                                />
-                                <flux:button
-                                    size="sm"
-                                    variant="ghost"
-                                    icon="shield-check"
-                                    href="{{ route('admin.roles.permissions', $role) }}"
-                                    wire:navigate.hover
-                                    :aria-label="__('Assign Permissions') . ' ' . $role->name"
-                                />
-                                <flux:button
-                                    size="sm"
-                                    variant="ghost"
-                                    icon="pencil"
-                                    href="{{ route('admin.roles.edit', $role) }}"
-                                    wire:navigate.hover
-                                    :aria-label="__('Edit') . ' ' . $role->name"
-                                />
-                                <flux:button
-                                    size="sm"
-                                    variant="ghost"
-                                    icon="trash"
-                                    wire:click="confirmDelete({{ $role->id }})"
-                                    :aria-label="__('Delete') . ' ' . $role->name"
-                                />
-                            </div>
-                        </flux:table.cell>
-                    </flux:table.row>
-                @empty
-                    <flux:table.row>
-                        <flux:table.cell colspan="5" class="text-center text-zinc-400 py-10">
-                            {{ $search ? __('No roles match your search.') : __('No roles found.') }}
-                        </flux:table.cell>
-                    </flux:table.row>
-                @endforelse
-            </flux:table.rows>
-        </flux:table>
+                <flux:table.rows>
+                    @forelse ($this->roles as $role)
+                        <flux:table.row :key="$role->id" class="transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-700/30">
+                            <flux:table.cell>
+                                <div class="flex items-center gap-2.5">
+                                    <div class="flex h-7 w-7 items-center justify-center rounded-md bg-blue-500/10 dark:bg-blue-500/15">
+                                        <flux:icon name="shield-check" class="size-3.5 text-blue-500" />
+                                    </div>
+                                    <span class="font-semibold">{{ $role->name }}</span>
+                                </div>
+                            </flux:table.cell>
+                            <flux:table.cell>
+                                <flux:badge size="sm" variant="outline" class="font-mono text-xs">{{ $role->guard_name }}</flux:badge>
+                            </flux:table.cell>
+                            <flux:table.cell>
+                                <flux:badge size="sm" color="sky">{{ $role->permissions_count }} {{ trans_choice('perm|perms', $role->permissions_count) }}</flux:badge>
+                            </flux:table.cell>
+                            <flux:table.cell class="text-zinc-500 text-sm">
+                                {{ $role->created_at?->diffForHumans() }}
+                            </flux:table.cell>
+                            <flux:table.cell align="end">
+                                <flux:dropdown position="bottom" align="end">
+                                    <flux:button size="sm" variant="ghost" icon="ellipsis-horizontal" />
+                                    <flux:menu>
+                                        <flux:menu.item
+                                            icon="eye"
+                                            href="{{ route('admin.roles.show', $role) }}"
+                                            wire:navigate.hover
+                                        >
+                                            {{ __('View Details') }}
+                                        </flux:menu.item>
+                                        <flux:menu.item
+                                            icon="shield-check"
+                                            href="{{ route('admin.roles.permissions', $role) }}"
+                                            wire:navigate.hover
+                                        >
+                                            {{ __('Assign Permissions') }}
+                                        </flux:menu.item>
+                                        <flux:menu.item
+                                            icon="pencil"
+                                            href="{{ route('admin.roles.edit', $role) }}"
+                                            wire:navigate.hover
+                                        >
+                                            {{ __('Edit') }}
+                                        </flux:menu.item>
+                                        <flux:menu.separator />
+                                        <flux:menu.item
+                                            icon="trash"
+                                            variant="danger"
+                                            wire:click="confirmDelete({{ $role->id }})"
+                                        >
+                                            {{ __('Delete') }}
+                                        </flux:menu.item>
+                                    </flux:menu>
+                                </flux:dropdown>
+                            </flux:table.cell>
+                        </flux:table.row>
+                    @empty
+                        <flux:table.row>
+                            <flux:table.cell colspan="5">
+                                <div class="flex flex-col items-center justify-center py-12 text-center">
+                                    <div class="flex h-14 w-14 items-center justify-center rounded-full bg-zinc-100 dark:bg-zinc-700/50 mb-4">
+                                        <flux:icon name="user-group" class="size-7 text-zinc-400" />
+                                    </div>
+                                    <flux:heading size="sm" class="text-zinc-500">
+                                        {{ $search ? __('No roles match your search') : __('No roles yet') }}
+                                    </flux:heading>
+                                    <flux:text class="text-sm text-zinc-400 mt-1">
+                                        {{ $search ? __('Try adjusting your search terms.') : __('Create your first role to get started.') }}
+                                    </flux:text>
+                                    @unless ($search)
+                                        <flux:button
+                                            variant="primary"
+                                            size="sm"
+                                            href="{{ route('admin.roles.create') }}"
+                                            wire:navigate.hover
+                                            icon="plus"
+                                            class="mt-4"
+                                        >
+                                            {{ __('New Role') }}
+                                        </flux:button>
+                                    @endunless
+                                </div>
+                            </flux:table.cell>
+                        </flux:table.row>
+                    @endforelse
+                </flux:table.rows>
+            </flux:table>
+        </div>
 
         {{-- Delete confirmation modal --}}
         <flux:modal name="confirm-delete" class="max-w-sm">
             <div class="space-y-4">
-                <flux:heading size="lg">{{ __('Delete role?') }}</flux:heading>
-                <flux:text>{{ __('This will permanently delete the role and revoke it from all users. This action cannot be undone.') }}</flux:text>
+                <div class="flex items-center gap-3">
+                    <div class="flex h-10 w-10 items-center justify-center rounded-full bg-red-500/10">
+                        <flux:icon name="exclamation-triangle" class="size-5 text-red-500" />
+                    </div>
+                    <flux:heading size="lg">{{ __('Delete role?') }}</flux:heading>
+                </div>
+                <flux:text class="text-zinc-500">{{ __('This will permanently delete the role and revoke it from all users. This action cannot be undone.') }}</flux:text>
 
                 <div class="flex justify-end gap-3 pt-2">
                     <flux:button

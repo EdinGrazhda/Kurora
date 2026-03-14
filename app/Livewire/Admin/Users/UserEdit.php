@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin\Users;
 
 use App\Models\User;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Validate;
@@ -64,10 +65,16 @@ class UserEdit extends Component
         $this->redirect(route('admin.users.index'), navigate: true);
     }
 
+    #[Computed]
+    public function allRoles()
+    {
+        return Role::orderBy('name')->get(['id', 'name']);
+    }
+
     public function render()
     {
         return view('Admin.Users.edit', [
-            'allRoles' => Role::orderBy('name')->get(['id', 'name']),
+            'allRoles' => $this->allRoles,
         ]);
     }
 }

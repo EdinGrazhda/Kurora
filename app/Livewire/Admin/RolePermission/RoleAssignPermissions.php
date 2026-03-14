@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\RolePermission;
 
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -41,7 +42,7 @@ class RoleAssignPermissions extends Component
 
     public function selectAll(): void
     {
-        $this->selectedPermissions = Permission::pluck('id')->map(fn ($id) => (string) $id)->toArray();
+        $this->selectedPermissions = $this->allPermissions->pluck('id')->map(fn ($id) => (string) $id)->toArray();
     }
 
     public function deselectAll(): void
@@ -49,14 +50,18 @@ class RoleAssignPermissions extends Component
         $this->selectedPermissions = [];
     }
 
-    public function render()
+    #[Computed]
+    public function allPermissions()
     {
-        $allPermissions = Permission::orderBy('name')
+        return Permission::orderBy('name')
             ->when($this->search, fn ($q) => $q->where('name', 'like', '%' . $this->search . '%'))
             ->get(['id', 'name']);
+    }
 
+    public function render()
+    {
         return view('Admin.RolePermission.Role.assign-permissions', [
-            'allPermissions' => $allPermissions,
+            'allPermissions' => $this->allPermissions,
         ]);
     }
 }

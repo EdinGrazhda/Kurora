@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin\Users;
 
 use App\Models\User;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -41,7 +42,7 @@ class UserAssignRoles extends Component
 
     public function selectAll(): void
     {
-        $this->selectedRoles = Role::pluck('id')->map(fn ($id) => (string) $id)->toArray();
+        $this->selectedRoles = $this->allRoles->pluck('id')->map(fn ($id) => (string) $id)->toArray();
     }
 
     public function deselectAll(): void
@@ -49,14 +50,18 @@ class UserAssignRoles extends Component
         $this->selectedRoles = [];
     }
 
-    public function render()
+    #[Computed]
+    public function allRoles()
     {
-        $allRoles = Role::orderBy('name')
+        return Role::orderBy('name')
             ->when($this->search, fn ($q) => $q->where('name', 'like', '%' . $this->search . '%'))
             ->get(['id', 'name']);
+    }
 
+    public function render()
+    {
         return view('Admin.Users.assign-roles', [
-            'allRoles' => $allRoles,
+            'allRoles' => $this->allRoles,
         ]);
     }
 }
